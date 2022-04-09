@@ -1,4 +1,5 @@
 import { TwitterClient } from "twitter-api-client";
+import { NFTSale } from "./types";
 
 export default class TwitterComms {
 
@@ -15,6 +16,19 @@ export default class TwitterComms {
 
     public IsInit(): boolean {
         return this._client !== null;
+    }
+
+    public SendTweet(content: string): boolean {
+        if (this._client) {
+            try {
+                this._client.tweets.statusesUpdate({ status: content });
+            }
+            catch (e: any) {
+                console.error(`SendTweet error | ${e}`);
+                return false;
+            }
+        }
+        return false;
     }
 
 }

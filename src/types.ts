@@ -17,4 +17,8 @@ export type NFTSale = {
      * Algorand address of the receiver
      */
     receiver: string;
+    /**
+     * The millisecond epoch time of when the sale occured
+     */
+    epochMs: number;
 };
