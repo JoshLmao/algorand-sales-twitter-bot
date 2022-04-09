@@ -1,0 +1,32 @@
+{
+    "name": "algorand-sales-twitter-bot",
+    "version": "1.0.0",
+    "description": "Twitter bot for serving the latest sales of Algorand NFTs",
+    "main": "index.js",
+    "scripts": {
+        "start": "tsc && node ./build/monitor.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/JoshLmao/algorand-sales-twitter-bot.git"
+    },
+    "contributors": [
+        {
+            "name": "JoshLmao",
+            "url": "https://joshlmao.com"
+        }
+    ],
+    "license": "GPL-3.0-or-later",
+    "bugs": {
+        "url": "https://github.com/JoshLmao/algorand-sales-twitter-bot/issues"
+    },
+    "homepage": "https://github.com/JoshLmao/algorand-sales-twitter-bot#readme",
+    "dependencies": {
+        "dotenv": "^16.0.0",
+        "twitter-api-client": "^1.5.2",
+        "typescript": "^4.6.3"
+    },
+    "devDependencies": {
+        "@types/node": "^17.0.23"
+    }
+}
