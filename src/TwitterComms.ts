@@ -1,5 +1,4 @@
 import { TwitterClient } from "twitter-api-client";
-import { NFTSale } from "./types";
 
 export default class TwitterComms {
 
@@ -14,10 +13,20 @@ export default class TwitterComms {
         });
     }
 
+    /**
+     * Determines whether the Twitter communication is valid and open, initialized
+     * @returns true if has been initialized
+     */
     public IsInit(): boolean {
         return this._client !== null;
     }
 
+
+    /**
+     * Sends a tweet with the provided content to the authed user
+     * @param content 
+     * @returns true if tweet successful
+     */
     public SendTweet(content: string): boolean {
         if (this._client) {
             try {

@@ -2,6 +2,8 @@
 
 A bot to get the latest sales of a creator address and post them to Twitter. Nicely written and open sourced by [@JoshLmao](https://twitter.com/joshlmao).
 
+⚠ Currently a WORK IN PROGRESS
+
 # License
 
 This repository specifically has the ["No License" license](https://choosealicense.com/no-permission/). This forbids any for-profit use and may only be explicitly used for non-profit or free means.
