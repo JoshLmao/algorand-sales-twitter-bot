@@ -1,5 +1,5 @@
 import { format } from "path";
-import { GetRecentCollectionSales } from "./GatherSales";
+import { GetRecentCollectionSales, NFTxSaleFeedResponse } from "./GatherSales";
 import TwitterComms from "./TwitterComms";
 import { NFTSale } from "./types";
 
@@ -12,10 +12,15 @@ require('dotenv').config({
 let _twitterComms: TwitterComms | null = null;
 // Current timeout thread
 let runningTimeout: any | null = null;
-// The last sale that got tweeted out
-let lastNotifiedSale: NFTSale | null = null;
 // Id of the collection on NFTx to monitor
 const COLLECTION_ID: string | null = process.env.COLLECTION_ID ?? null;
+const NFTX_API_AUTH: string | null = process.env.NFTX_API_AUTH ?? null;
+// Request next token
+let lastRequestNextToken: string | null = null;
+
+async function ThreadSleep(ms: number): Promise<void> {
+    return await new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /**
  * Formats a NFT sale into a custom twitter format
@@ -38,61 +43,66 @@ function FormatSaleToTweet(sale: NFTSale): string {
      * a new line
      */
 
-    const algoAmount: number = sale.microAlgos / Math.pow(10, 6);
-    return `NFT ${sale.name} just sold for ${algoAmount} to buyer '${sale.receiver}'`;
+    const algoAmount: number = sale.ualgos / Math.pow(10, 6);
+    return `NFT ${sale.name} just sold for ${algoAmount} to buyer '${sale.receiver}'\n\n${sale.nftxUrl}`;
 }
 
 // Main check function. Call once every X duration to perform the check
 async function check() {
 
+    // Make request to get new sales
     let allRecentSales: NFTSale[] | null = null;
-    if (COLLECTION_ID) {
-        allRecentSales = await GetRecentCollectionSales(COLLECTION_ID);
+    let nextToken: string | null = null;
+    if (COLLECTION_ID && NFTX_API_AUTH) {
+        const resp: NFTxSaleFeedResponse | null  = await GetRecentCollectionSales(COLLECTION_ID, lastRequestNextToken, NFTX_API_AUTH);
+        if (resp) {
+            allRecentSales = resp.sales;
+            nextToken = resp.nextToken;
+        }
     }
     
-    if (allRecentSales && allRecentSales.length > 0) {
-        const hasNewSales: boolean = lastNotifiedSale !== allRecentSales[0];
-        if (hasNewSales) {
-            
-            // Determine all sales that are new and require to be tweeted out
-            let newSales: NFTSale[] = [];
-            if (lastNotifiedSale) {
-                for (const sale of allRecentSales) {
-                    if (sale.epochMs > lastNotifiedSale.epochMs) {
-                        newSales.push(sale);
-                    }
-                }
+    // If have sales and has more than 0 and lastRequestNextToken is valid
+    // Dont tweet a sale when we don't have a previous nextToken as it is just last sale
+    if (allRecentSales && allRecentSales.length > 0 && lastRequestNextToken) {
+        // Determine all sales that are new and require to be tweeted out
+        // Iterate over each new sale and tweet out
+        for (const newSale of allRecentSales) {
+            const formattedString: string = FormatSaleToTweet(newSale);
+            if (_twitterComms === null) {
+                console.error(`Twitter is not setup!`);
             }
             else {
-                // no prior notified sale, set all
-                newSales = allRecentSales;
-            }
-
-            // Iterate over each new sale and tweet out
-            for (const newSale of newSales) {
-                const formattedString: string = FormatSaleToTweet(newSale);
-                if (_twitterComms === null) {
-                    console.error(`Twitter is not setup!`);
-                }
-                else {
                     _twitterComms.SendTweet(formattedString);
                 }
             }
 
-            // Update last tweeted out sale
-            lastNotifiedSale = newSales[0];
+            // Sleep a duration before tweeting next
+            const sleepMs: number = 1000;
+            await ThreadSleep(sleepMs);
         }
     }
     
+    // Update and store the next nextToken if provided
+    if (nextToken) {
+        lastRequestNextToken = nextToken;
+    }
 }
 
 // Main entry point
-function main() {
+async function main() {
     // Parse env vars
     const apiKey: string = process.env.TWITTER_API_KEY ?? "";
     const apiKeyPrivate: string = process.env.TWITTER_API_KET_SECRET ?? "";
     const accessToken: string = process.env.TWITTER_ACCESS_TOKEN ?? "";
     const accessTokenSecret: string = process.env.TWITTER_ACCESS_TOKEN_PRIVATE ?? "";
+
+    if (COLLECTION_ID && NFTX_API_AUTH) {
+        console.log(`Configured to track '${COLLECTION_ID}' sales from NFTx API`);
+    }
+    else {
+        console.error(`No COLLECTION_ID or NFTX_API_AUTH provided! Make sure`);
+        return;
+    }
 
     // Init TwitterComms class
     _twitterComms = new TwitterComms(apiKey, apiKeyPrivate, accessToken, accessTokenSecret);
@@ -101,13 +111,20 @@ function main() {
     }
 
     // Start thread to monitor sales every duration
-    const envVarMinutes: number = process.env.CHECK_MINUTES ? parseInt(process.env.CHECK_MINUTES) : 1;
-    const ms: number = envVarMinutes * 60 * 1000;
-    runningTimeout = setTimeout(async () => {
+    const envVarMinutes: number = process.env.CHECK_SECONDS ? parseInt(process.env.CHECK_SECONDS) : 60;
+    const ms: number = envVarMinutes * 1000;
+    while (true) {
+        // Perform a check
+        console.log("Awoken, performing check...");
         await check();
-    }, ms);
+
+        // Sleep for specified amount of time
+        console.log(`Sleeping for ${ms}ms`);
+        await ThreadSleep(ms);
+    }
+
 }
 
-(() => {
-    main();
-});
+(async () => {
+    await main();
+})();
