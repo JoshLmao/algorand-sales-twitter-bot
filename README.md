@@ -24,6 +24,10 @@ This repository specifically has the ["No License" license](https://choosealicen
     - Select "Products" on the left panel and select "Twitter API v2"
     - Select "Elevated" at the top. Click the prompt and provide extra information needed
 
+Once done, you will have obtained the relevant Twitter API variables needed. The last thing you need is an `authorization` token from NFTx. Obtain one by going to https://api.nftexplorer.app
+
+Set the variables in the `.env` file to your obtained values.
+
 # Run
 
 - `npm install` to install all required packages

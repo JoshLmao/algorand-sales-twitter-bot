@@ -1,7 +1,7 @@
-import { format } from "path";
 import { GetRecentCollectionSales, NFTxSaleFeedResponse } from "./GatherSales";
 import TwitterComms from "./TwitterComms";
 import { NFTSale } from "./types";
+import TwitBotLogger from "./TwitBotLogger";
 
 // Init .env and load
 const path = require('path'); 
@@ -43,7 +43,9 @@ function FormatSaleToTweet(sale: NFTSale): string {
      */
 
     const algoAmount: number = sale.ualgos / Math.pow(10, 6);
-    return `NFT ${sale.name} just sold for ${algoAmount} to buyer '${sale.receiver}'\n\n${sale.nftxUrl}`;
+    const buyerAddrShowChars: number = 4;
+    const shortenedBuyer: string = sale.receiver.substring(0, buyerAddrShowChars) + "..." + sale.receiver.substring(sale.receiver.length - buyerAddrShowChars);
+    return `${sale.name} just sold for ${algoAmount} to buyer '${shortenedBuyer}'\n\n${sale.nftxUrl}`;
 }
 
 // Main check function. Call once every X duration to perform the check
@@ -53,7 +55,7 @@ async function check() {
     let allRecentSales: NFTSale[] | null = null;
     let nextToken: string | null = null;
     if (COLLECTION_ID && NFTX_API_AUTH) {
-        const resp: NFTxSaleFeedResponse | null  = await GetRecentCollectionSales(COLLECTION_ID, lastRequestNextToken, NFTX_API_AUTH);
+        const resp: NFTxSaleFeedResponse | null  = await GetRecentCollectionSales(COLLECTION_ID, NFTX_API_AUTH, lastRequestNextToken);
         if (resp) {
             allRecentSales = resp.sales;
             nextToken = resp.nextToken;
@@ -68,9 +70,10 @@ async function check() {
         for (const newSale of allRecentSales) {
             const formattedString: string = FormatSaleToTweet(newSale);
             if (_twitterComms === null) {
-                console.error(`Twitter is not setup!`);
+                TwitBotLogger.error(`Twitter is not setup!`);
             }
             else {
+                TwitBotLogger.info(`Sending tweet | Sale ${newSale.name} for ${newSale.ualgos / 1000000}A`);
                 _twitterComms.SendTweet(formattedString);
             }
 
@@ -97,10 +100,10 @@ async function main() {
     const accessTokenSecret: string = process.env.TWITTER_ACCESS_TOKEN_SECRET ?? "";
 
     if (COLLECTION_ID && NFTX_API_AUTH) {
-        console.log(`Configured to track '${COLLECTION_ID}' sales from NFTx API`);
+        TwitBotLogger.info(`Configured to track '${COLLECTION_ID}' sales from NFTx API`);
     }
     else {
-        console.error(`No COLLECTION_ID or NFTX_API_AUTH provided! Make sure`);
+        TwitBotLogger.error(`No COLLECTION_ID or NFTX_API_AUTH provided! Make sure`);
         return;
     }
 
@@ -115,11 +118,11 @@ async function main() {
     const ms: number = envVarMinutes * 1000;
     while (true) {
         // Perform a check
-        console.log("Awoken, performing check...");
+        TwitBotLogger.info("Awoken, performing check...");
         await check();
 
         // Sleep for specified amount of time
-        console.log(`Sleeping for ${ms}ms`);
+        TwitBotLogger.info(`Sleeping for ${ms}ms`);
         await ThreadSleep(ms);
     }
 

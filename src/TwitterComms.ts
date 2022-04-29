@@ -1,7 +1,9 @@
 import { TwitterClient } from "twitter-api-client";
+import TwitBotLogger from "./TwitBotLogger";
 
 export default class TwitterComms {
 
+    // Current instance of TwitterClient from twiter-api-client
     private _client: TwitterClient | null = null;
 
     constructor(apiKey: string, apiKeySecret: string, accessToken: string, accessTokenPrivate: string) {
@@ -34,7 +36,7 @@ export default class TwitterComms {
                 return true;
             }
             catch (e: any) {
-                console.error(`SendTweet error | ${e}`);
+                TwitBotLogger.error(`SendTweet error | ${e}`);
                 return false;
             }
         }

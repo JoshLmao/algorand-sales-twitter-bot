@@ -1,5 +1,6 @@
 import axios from "axios";
 import { NFTSale } from "./types";
+import TwitBotLogger from "./TwitBotLogger";
 
 export type NFTxSaleFeedResponse = {
     nextToken: string;
@@ -7,23 +8,13 @@ export type NFTxSaleFeedResponse = {
 };
 
 /**
- * Gets all recent NFT sales from the provided creator addresses
- * @param creatorAddresses 
- * @returns Null if failed or an array of recent sales 
- */
-export async function GetRecentSales(creatorAddresses: string[]): Promise<NFTSale[] | null> {
-    // ToDo
-    return null;
-}
-
-
-
-/**
  * Gets all recent NFT sales for a collection, using it's id
- * @param collectionId The id of the collection to get sales for
+ * @param collectionId The id of the collection to get sales for 
+ * @param nextToken A nextToken provided from NFTx API. Can be empty
+ * @param userAuth Current NFTx API authorization to access the endpoint
  * @returns Null if failed or an array of recent sales
  */
-export async function GetRecentCollectionSales(collectionId: string, nextToken: string | null, userAuth: string): Promise<NFTxSaleFeedResponse | null> {
+export async function GetRecentCollectionSales(collectionId: string, userAuth: string, nextToken: string | null): Promise<NFTxSaleFeedResponse | null> {
     /*
      *  For this, we're using a *rate limited* endpoint by NFT Explorer https://www.nftexplorer.app/
      *  which provides the last sales of the collection. The request requires authorization to ensure
@@ -66,7 +57,7 @@ async function MakeRequest(url: URL, auth: string | null): Promise<any | null> {
         })
         .catch( (error: any) => {
             if (error.response.status === 429) {
-                console.error(`Error Status Code 429: Request blocked as you are calling the API too quickly!`);
+                TwitBotLogger.error(`Error Status Code 429: Request blocked as you are calling the API too quickly!`);
             }
             return null;
         });
@@ -78,7 +69,7 @@ async function MakeRequest(url: URL, auth: string | null): Promise<any | null> {
         return null;
     }
     catch (e: any) {
-        console.error(`Unexpected error occured in MakeRequest(url = ${url.href}) | ${e}`);
+        TwitBotLogger.error(`Unexpected error occured in MakeRequest(url = ${url.href}) | ${e}`);
     }
     return null;
 }
