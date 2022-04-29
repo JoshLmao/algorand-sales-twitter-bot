@@ -9,9 +9,8 @@ require('dotenv').config({
     path: path.join(__dirname, '../.env') 
 });
 
+// Current Twitter helper instance class
 let _twitterComms: TwitterComms | null = null;
-// Current timeout thread
-let runningTimeout: any | null = null;
 // Id of the collection on NFTx to monitor
 const COLLECTION_ID: string | null = process.env.COLLECTION_ID ?? null;
 const NFTX_API_AUTH: string | null = process.env.NFTX_API_AUTH ?? null;
@@ -76,9 +75,11 @@ async function check() {
                 }
             }
 
-            // Sleep a duration before tweeting next
-            const sleepMs: number = 1000;
-            await ThreadSleep(sleepMs);
+            // Sleep a duration before tweeting next if more than one sale occured
+            if (allRecentSales.length > 1) {
+                const sleepMs: number = 1000;
+                await ThreadSleep(sleepMs);
+            }
         }
     }
     
