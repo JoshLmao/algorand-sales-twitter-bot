@@ -20,7 +20,7 @@ export async function GetRecentCollectionSales(collectionId: string, userAuth: s
      *  which provides the last sales of the collection. The request requires authorization to ensure
      *  us calling the endpoint are the owners/have auth of the requesting collection
      */
-    const baseUrl: string = "http://localhost:3050"; // `https://api.nftexplorer.app`;
+    const baseUrl: string = `https://api.nftexplorer.app`;
     const endpoint: URL = new URL(`${baseUrl}/v1/collections/salesFeed/${collectionId}`);
 
     // Append nextToken to params if provided
