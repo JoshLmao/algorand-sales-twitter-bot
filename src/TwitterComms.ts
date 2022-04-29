@@ -31,6 +31,7 @@ export default class TwitterComms {
         if (this._client) {
             try {
                 this._client.tweets.statusesUpdate({ status: content });
+                return true;
             }
             catch (e: any) {
                 console.error(`SendTweet error | ${e}`);

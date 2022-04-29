@@ -13,13 +13,16 @@ This repository specifically has the ["No License" license](https://choosealicen
 - Make twitter account for bot. This bot will create the developer app and tweet out
 - Go to developer portal, create Developer App **on Bot Account**
 - Setting, User authentification settings, click Edit
-    - Enable Oauth 2.0, 1.0a
-    - Type of app: Automated app or bot
-    - App permissions: Read and write
-    - Callback: `https://localhost:3000`
-    - Website: Your website
+    - Check the boxes to enable Oauth 2.0, 1.0a
+    - **Type of app**: Automated app or bot
+    - **App permissions**: Read and write
+    - **Callback**: `https://localhost:3000`
+    - **Website**: Your website
 - Keys and tokens, Access Token and Secret, click Regenate to get `accessToken` and `accessTokenSecret`
 - Save API keys and access keys. Put them in .env
+- You also need to apply for "Elevated" API access
+    - Select "Products" on the left panel and select "Twitter API v2"
+    - Select "Elevated" at the top. Click the prompt and provide extra information needed
 
 # Run
 

@@ -71,8 +71,7 @@ async function check() {
                 console.error(`Twitter is not setup!`);
             }
             else {
-                    _twitterComms.SendTweet(formattedString);
-                }
+                _twitterComms.SendTweet(formattedString);
             }
 
             // Sleep a duration before tweeting next if more than one sale occured
@@ -95,7 +94,7 @@ async function main() {
     const apiKey: string = process.env.TWITTER_API_KEY ?? "";
     const apiKeyPrivate: string = process.env.TWITTER_API_KET_SECRET ?? "";
     const accessToken: string = process.env.TWITTER_ACCESS_TOKEN ?? "";
-    const accessTokenSecret: string = process.env.TWITTER_ACCESS_TOKEN_PRIVATE ?? "";
+    const accessTokenSecret: string = process.env.TWITTER_ACCESS_TOKEN_SECRET ?? "";
 
     if (COLLECTION_ID && NFTX_API_AUTH) {
         console.log(`Configured to track '${COLLECTION_ID}' sales from NFTx API`);
