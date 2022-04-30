@@ -1,13 +1,12 @@
 [Service]
 Type=simple
-User=www-data
 Restart=on-failure
-WorkingDirectory=/root/twitter-bot/
-ExecStart=sudo ./start.sh
+WorkingDirectory=/root/twitter-bot
+ExecStart=/bin/bash ./start.sh
 
 [Unit]
 Description=Twitter Bot for posting Algorand collection sales to twitter, created by JoshLmao
 After=network.target
 
 [Install]
-WantedBy = multi-user.target
+WantedBy=multi-user.target

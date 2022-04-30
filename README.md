@@ -77,3 +77,18 @@ Once done, you can do the same command [in run](#run) to run the bot
 # Customization
 
 You can customize the output tweet of the bot by changing the Typescript function [`FormatSaleToTweet()`](./src/monitor.ts#L29). This step requires some coding knowledge
+
+# Linux Help
+
+Below is some helpful commands to use the `twitter-bot.service` systemctl file and the `start.sh` script
+
+If you are having any issues with systemctl, make sure the `WorkingDirectory` value in the `twitter-bot.service` file is to the right directory.
+
+- `chmod +x start.sh` to have permission on the utility start script
+- `cp ./twitter-bot.service /etc/systemd/system/twitter-bot.service` to copy the systemctl service file from the local directory to the systemctl directory
+- `sudo systemctl daemon-reload` to reload systemctl to the current services
+- `sudo systemctl enable twitter-bot.service` to enable on every reboot. Only need to run once
+- `sudo systemctl start twitter-bot.service ` to start the service
+- `sudo systemctl status twitter-bot.service` to see the current output
+- `sudo systemctl restart twitter-bot.service` to restart the current service
+- `sudo systemctl stop twitter-bot.service` to stop the service if running

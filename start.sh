@@ -1,4 +1,6 @@
-# Single entrypoint script for Linux to run in one Systemctl command
 #!/bin/bash
+echo "Building Typescript..."
 tsc
-node ./build/monitor.js
+echo "Typescript completed compilation!"
+echo "Starting Twitter Bot..."
+node /root/twitter-bot/build/monitor.js
