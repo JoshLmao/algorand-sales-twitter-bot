@@ -8,14 +8,14 @@ This repository specifically has the ["No License" license](https://choosealicen
 
 # Support
 
-If you found this useful, please consider supporting NFT Explorer to help pay for running costs as this would not be possible without their API
+If you found this useful, please consider supporting [NFT Explorer](https://www.nftexplorer.app/) to help pay for running costs as this would not be possible without their API
 
 NFTx donate address: [`Z6EKYUZTFHFVWUS7EYJC5PVLNIQD7OZRNWTSBDFAAZA3FF2IZDSWLUJ33U`](https://algoexplorer.io/address/Z6EKYUZTFHFVWUS7EYJC5PVLNIQD7OZRNWTSBDFAAZA3FF2IZDSWLUJ33U)
 
 # Setup
 
 - Make twitter account for bot. This bot will create the developer app and tweet out
-- Go to developer portal, create Developer App **on Bot Account**
+- Go to the [Twitter developer portal](https://developer.twitter.com/), create Developer App **on Bot Account**
 - Setting, User authentification settings, click Edit
     - Check the boxes to enable Oauth 2.0, 1.0a
     - **Type of app**: Automated app or bot
@@ -28,7 +28,7 @@ NFTx donate address: [`Z6EKYUZTFHFVWUS7EYJC5PVLNIQD7OZRNWTSBDFAAZA3FF2IZDSWLUJ33
     - Select "Products" on the left panel and select "Twitter API v2"
     - Select "Elevated" at the top. Click the prompt and provide extra information needed
 
-Once done, you will have obtained the relevant Twitter API variables needed. The last thing you need is an `authorization` token from NFTx. Obtain one by going to https://api.nftexplorer.app
+Once done, you will have obtained the relevant Twitter API variables needed. The last thing you need is an `authorization` token from NFTx.
 
 ## Creating a Droplet *(Optional)*
 
