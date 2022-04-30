@@ -28,8 +28,33 @@ Once done, you will have obtained the relevant Twitter API variables needed. The
 
 Set the variables in the `.env` file to your obtained values.
 
+## Creating a Droplet *(Optional)*
+
+You'll want somewhere to run this, I advice this step if you know what you're doing, otherwise skip to [how to run the bot](#run) 
+
+I suggest using Digital Ocean. Sign up, create a Droplet of Ubuntu, Basic, Regular with SSD, choose location, configure SSH keys, Create droplet
+
+After initializing, open the console of the droplet, run the following commands
+- `git clone https://github.com/JoshLmao/algorand-sales-twitter-bot.git ./twitter-bot`
+- `cd ./twitter-bot`
+- `sudo apt update`
+- `sudo apt install nodejs`
+- `sudo apt install npm`
+- `sudo apt install node-typescript`
+
+Once done, make sure you configure the .env with your setting. 
+- `nano ./.env` and enter each variable.
+- `Ctrl + X` to exit
+- `Y` to confirm save
+- `Enter` to confirm the file
+
+Then, simply run `npm start` and let do it's thing 😎
+
 # Run
 
 - `npm install` to install all required packages
-- `tsc` to build Typescript to Javascript
-- `node ./build/monitor.js` to run the monitor script
+- `npm start` to build and run the script with the current `.env` configuration
+
+# Customization
+
+You can customize the output tweet of the bot by changing the Typescript function [`FormatSaleToTweet()`](./src/monitor.ts#L29)
