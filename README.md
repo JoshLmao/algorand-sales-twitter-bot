@@ -2,11 +2,15 @@
 
 A bot to get the latest sales of a creator address and post them to Twitter. Nicely written and open sourced by [@JoshLmao](https://twitter.com/joshlmao).
 
-⚠ Currently a WORK IN PROGRESS
-
 # License
 
 This repository specifically has the ["No License" license](https://choosealicense.com/no-permission/). This forbids any for-profit use and may only be explicitly used for non-profit or free means.
+
+# Support
+
+If you found this useful, please consider supporting NFT Explorer to help pay for running costs as this would not be possible without their API
+
+NFTx donate address: [`Z6EKYUZTFHFVWUS7EYJC5PVLNIQD7OZRNWTSBDFAAZA3FF2IZDSWLUJ33U`](https://algoexplorer.io/address/Z6EKYUZTFHFVWUS7EYJC5PVLNIQD7OZRNWTSBDFAAZA3FF2IZDSWLUJ33U)
 
 # Setup
 
@@ -26,8 +30,6 @@ This repository specifically has the ["No License" license](https://choosealicen
 
 Once done, you will have obtained the relevant Twitter API variables needed. The last thing you need is an `authorization` token from NFTx. Obtain one by going to https://api.nftexplorer.app
 
-Set the variables in the `.env` file to your obtained values.
-
 ## Creating a Droplet *(Optional)*
 
 You'll want somewhere to run this, I advice this step if you know what you're doing, otherwise skip to [how to run the bot](#run) 
@@ -42,19 +44,36 @@ After initializing, open the console of the droplet, run the following commands
 - `sudo apt install npm`
 - `sudo apt install node-typescript`
 
-Once done, make sure you configure the .env with your setting. 
-- `nano ./.env` and enter each variable.
-- `Ctrl + X` to exit
-- `Y` to confirm save
-- `Enter` to confirm the file
+# Update the `.env`
 
-Then, simply run `npm start` and let do it's thing 😎
+Make sure you configure the .env with your obtained values
+
+- Linux
+    - `nano ./.env` and enter each variable.
+    - `Ctrl + X` to exit
+    - `Y` to confirm save
+    - `Enter` to confirm the file
+- Windows
+    - Edit the file in a text editor. Right click an open in Notepad. 
+    - Set the variables, save the file.
 
 # Run
 
-- `npm install` to install all required packages
+Before running, make sure to do the [Update the `.env`](#update-the-env) steps
+
+- `npm install` to install all required packages. Should be run before any attempt to run
 - `npm start` to build and run the script with the current `.env` configuration
+
+# Updating
+
+If you wish to update, do the following
+
+- `git pull` to get the latest changes from the repo
+    - Note: if there are merge conflicts, you can do `git stash` to save your changes, allowing you to do `git pull` and then run `git stash pop` to apply it again
+    - *Warning:* You might have merge conflicts when running `git stash pop`. I suggest either managing the merge yourself or running `git reset --hard origin/main` and redoing your changes
+
+Once done, you can do the same command [in run](#run) to run the bot
 
 # Customization
 
-You can customize the output tweet of the bot by changing the Typescript function [`FormatSaleToTweet()`](./src/monitor.ts#L29)
+You can customize the output tweet of the bot by changing the Typescript function [`FormatSaleToTweet()`](./src/monitor.ts#L29). This step requires some coding knowledge
