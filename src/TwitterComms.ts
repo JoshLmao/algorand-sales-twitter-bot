@@ -35,7 +35,7 @@ export default class TwitterComms {
                 this._client.tweets.statusesUpdate({ status: content });
                 return true;
             }
-            catch (e: any) {
+            catch (e) {
                 TwitBotLogger.error(`SendTweet error | ${e}`);
                 return false;
             }

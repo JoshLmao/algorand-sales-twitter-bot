@@ -95,7 +95,7 @@ async function check() {
 async function main() {
     // Parse env vars
     const apiKey: string = process.env.TWITTER_API_KEY ?? "";
-    const apiKeyPrivate: string = process.env.TWITTER_API_KET_SECRET ?? "";
+    const apiKeyPrivate: string = process.env.TWITTER_API_KEY_SECRET ?? "";
     const accessToken: string = process.env.TWITTER_ACCESS_TOKEN ?? "";
     const accessTokenSecret: string = process.env.TWITTER_ACCESS_TOKEN_SECRET ?? "";
 

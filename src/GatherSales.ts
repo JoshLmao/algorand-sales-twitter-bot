@@ -55,7 +55,7 @@ async function MakeRequest(url: URL, auth: string | null): Promise<any | null> {
                 "authorization": auth ?? "",
             },
         })
-        .catch( (error: any) => {
+        .catch( (error) => {
             if (error.response.status === 429) {
                 TwitBotLogger.error(`Error Status Code 429: Request blocked as you are calling the API too quickly!`);
             }
@@ -68,7 +68,7 @@ async function MakeRequest(url: URL, auth: string | null): Promise<any | null> {
         }
         return null;
     }
-    catch (e: any) {
+    catch (e) {
         TwitBotLogger.error(`Unexpected error occured in MakeRequest(url = ${url.href}) | ${e}`);
     }
     return null;
