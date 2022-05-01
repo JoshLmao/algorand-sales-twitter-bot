@@ -2,6 +2,7 @@ import { GetRecentCollectionSales, NFTxSaleFeedResponse } from "./GatherSales";
 import TwitterComms from "./TwitterComms";
 import { NFTSale } from "./types";
 import TwitBotLogger from "./TwitBotLogger";
+import TweetFormatter from "./TweetFormatter";
 
 // Init .env and load
 const path = require('path'); 
@@ -17,6 +18,11 @@ const NFTX_API_AUTH: string | null = process.env.NFTX_API_AUTH ?? null;
 // Request next token
 let lastRequestNextToken: string | null = null;
 
+/**
+ * Sleeps execution for the given milliseconds
+ * @param ms Amount in milliseconds to sleep for
+ * @returns sleep 
+ */
 async function ThreadSleep(ms: number): Promise<void> {
     return await new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -40,12 +46,15 @@ function FormatSaleToTweet(sale: NFTSale): string {
      * This is an example
      * of a tweet on
      * a new line
+     * 
+     * There is a range of premade ones stored in the TweetFormatter class which you can use.
+     * Otherwise, use this space below to creator your own
      */
 
-    const algoAmount: number = sale.ualgos / Math.pow(10, 6);
-    const buyerAddrShowChars: number = 4;
-    const shortenedBuyer: string = sale.receiver.substring(0, buyerAddrShowChars) + "..." + sale.receiver.substring(sale.receiver.length - buyerAddrShowChars);
-    return `${sale.name} just sold for ${algoAmount} to buyer '${shortenedBuyer}'\n\n${sale.nftxUrl}`;
+    /// Uncomment one of the following to use a preset
+    /// Otherwise, comment out both and provide your own tweet
+    //return TweetFormatter.BasicTweet(sale);
+    return TweetFormatter.EmojiTweet(sale);
 }
 
 // Main check function. Call once every X duration to perform the check
