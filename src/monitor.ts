@@ -15,6 +15,10 @@ let _twitterComms: TwitterComms | null = null;
 // Id of the collection on NFTx to monitor
 const COLLECTION_ID: string | null = process.env.COLLECTION_ID ?? null;
 const NFTX_API_AUTH: string | null = process.env.NFTX_API_AUTH ?? null;
+// Minimum USD requirement of sale
+const USD_MIN: number | null = process.env.MIN_USD_PRICE ? parseFloat(process.env.MIN_USD_PRICE) : null;
+// Minumum algo (not uAlgo) requirement for sale
+const ALGO_MIN: number | null = process.env.MIN_ALGO_PRICE ? parseFloat(process.env.MIN_ALGO_PRICE) : null;
 // Request next token
 let lastRequestNextToken: string | null = null;
 
@@ -25,6 +29,33 @@ let lastRequestNextToken: string | null = null;
  */
 async function ThreadSleep(ms: number): Promise<void> {
     return await new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Does the current sale meet all of our requirements to tweet it out
+ * @param sale The current sale
+ * @returns true if all requirements are met
+ */
+function DoesSaleMeetRequirements(sale: NFTSale): boolean {
+    const allRequirements: boolean[] = [];
+
+    // Check sale meets minimum USD requirement if provided
+    if (USD_MIN !== null && USD_MIN > 0) {
+        allRequirements.push( sale.usdPrice >= USD_MIN );
+    }
+
+    // Check sale meets ALGO requiement if provided
+    if (ALGO_MIN !== null && ALGO_MIN > 0) {
+        const algo: number = sale.ualgos / 1000000;
+        allRequirements.push( algo >= ALGO_MIN );
+    }
+
+    // Sale meets requirements if every requirement has been met (is true)
+    if (allRequirements.length > 0) {
+        return allRequirements.every(x => x === true);
+    }
+    // Default return to true as we have no requirements
+    return true;
 }
 
 /**
@@ -77,6 +108,14 @@ async function check() {
         // Determine all sales that are new and require to be tweeted out
         // Iterate over each new sale and tweet out
         for (const newSale of allRecentSales) {
+            
+            // Skip if sale doesn't meet requirements
+            if (!DoesSaleMeetRequirements(newSale)) {
+                TwitBotLogger.info(`Ignoring sale '${newSale.name}' for ALGO/USD '${newSale.ualgos / 1000000}/${newSale.usdPrice}' as doesn't meet requirements '${ALGO_MIN}/${USD_MIN}'`);
+                continue;
+            }
+
+            // Format sale into tweet
             const formattedString: string = FormatSaleToTweet(newSale);
             if (_twitterComms === null) {
                 TwitBotLogger.error(`Twitter is not setup!`);
@@ -121,6 +160,8 @@ async function main() {
     if (!_twitterComms.IsInit()) {
         return;
     }
+
+    TwitBotLogger.info(`Bot initialized!${ USD_MIN !== null ? ` USD Minimum of $${USD_MIN}` : "" }${ALGO_MIN ? ` ALGO minimum of A${ALGO_MIN}` : "" }`);
 
     // Start thread to monitor sales every duration
     const envVarMinutes: number = process.env.CHECK_SECONDS ? parseInt(process.env.CHECK_SECONDS) : 60;

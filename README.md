@@ -57,6 +57,10 @@ Make sure you configure the .env with your obtained values
     - Edit the file in a text editor. Right click an open in Notepad. 
     - Set the variables, save the file.
 
+## Minimum Sale Requirements
+
+You can set either the `MIN_USD_PRICE` and `MIN_ALGO_PRICE` variables if you wish for the bot to only tweet sales that are above or equal to that price requirement. These can be left blank to not need the requirement, such as if you only want one USD or ALGO requirement, or both left blank for no requirement at all.
+
 # Run
 
 Before running, make sure to do the [Update the `.env`](#update-the-env) steps

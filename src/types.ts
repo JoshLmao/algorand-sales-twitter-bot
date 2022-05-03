@@ -34,8 +34,4 @@ export type NFTSale = {
      * Location where the sale took place
      */
     saleLocation: "randgallery" | "algoxnft" | "ab2" | "algogems" | "dartroom" | "algodrop";
-    /**
-     * URL of the asset/NFT. Usually the ipfs:// link for NFTs
-     */
-    url: string;
 };
