@@ -80,7 +80,33 @@ Once done, you can do the same command [in run](#run) to run the bot
 
 # Customization
 
-You can customize the output tweet of the bot by changing the Typescript function [`FormatSaleToTweet()`](./src/monitor.ts#L29). This step requires some coding knowledge
+## Easy Way
+
+You can edit the `tweet-format.json` file with a custom format to customize how the bot tweets out. Simply replace the `format` value with an appropriate format and the bot will use it to tweet. You can use `\n` for a new line character to place the following on to the next line.
+
+For example
+```
+"format": "👀 {name}\n🏧 {algos}\n💰 {usdPrice}\n🤝 {shortReceiver}\n{nftxUrl}",
+```
+
+| Key | Example | Description |
+| --- | ----- | ----------- |
+| `{name}` | CGF #420 | The name of the NFT |
+| `{nftxUrl}` | https://www.nftexplorer.app/asset/582495036 | The NFTx URL of the asset. Provide this to get metadata on the asset in the tweet, such as displaying the NFT image |
+| `{assetId}` | 582495036 | Asset ID of the NFT |
+| `{usdPrice}` | 21.37 | Sale price in dollars (USD) |
+| `{location}` | Rand Gallery | Location the sale took place on. Check NFTx for a full list of supported marketplaces |
+| `{algos}` | 25 | Sale price in Algos |
+| `{ualgos}` | 25000000 | Sale price in uAlgos, which is regular algos multiplied by 10^6
+| `{shortReceiver}` | `6SNY...RRRI` | Receiver address shortened to display the first and last 4 characters, with an elipse in between |
+| `{receiver}` | `6SNY5BGSS7DKQMTTU5IIL63ZQCSVM45VHJJP7T6X2ZLHRXESAJQO55RRRI` | Full Algorand address of the buyer |
+| `{epochMs}` | `1645391880000` | [Refer to this](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now) for more information on how time works in coding |
+| `{dateShort}` | 20/02/2022, 21:18 | A short readable string of the date and time of the sale |
+
+
+## Hard Way: Code
+
+You can customize the output tweet of the bot by changing the Typescript function [`FormatSaleToTweet()`](./src/monitor.ts#L69). This step requires some coding knowledge
 
 # Linux Help
 
