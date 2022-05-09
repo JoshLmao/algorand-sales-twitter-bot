@@ -1,3 +1,12 @@
+export enum ESaleLocation {
+    RandGallery = "randgallery",
+    ALGOxNFT = "algoxnft",
+    AB2 = "ab2",
+    AlgoGems = "algogems",
+    Dartroom = "dartroom",
+    AlgoDrop = "algodrop",
+};
+
 export type NFTSale = {
     /**
      * The asaId of the NFT
@@ -33,5 +42,5 @@ export type NFTSale = {
     /**
      * Location where the sale took place
      */
-    saleLocation: "randgallery" | "algoxnft" | "ab2" | "algogems" | "dartroom" | "algodrop";
+    saleLocation: ESaleLocation;
 };

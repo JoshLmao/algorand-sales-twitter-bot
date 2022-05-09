@@ -1,6 +1,6 @@
 import { GetRecentCollectionSales, NFTxSaleFeedResponse } from "./GatherSales";
 import TwitterComms from "./TwitterComms";
-import { NFTSale } from "./types";
+import { ESaleLocation, NFTSale } from "./types";
 import TwitBotLogger from "./TwitBotLogger";
 import TweetFormatter from "./TweetFormatter";
 
@@ -9,6 +9,8 @@ const path = require('path');
 require('dotenv').config({ 
     path: path.join(__dirname, '../.env') 
 });
+
+const userCustomTweetFormat = require("../tweet-format.json");
 
 // Current Twitter helper instance class
 let _twitterComms: TwitterComms | null = null;
@@ -81,6 +83,15 @@ function FormatSaleToTweet(sale: NFTSale): string {
      * There is a range of premade ones stored in the TweetFormatter class which you can use.
      * Otherwise, use this space below to creator your own
      */
+
+    // If user supplied a custom tweet format in the json file, lets use it
+    if (userCustomTweetFormat && userCustomTweetFormat.format && userCustomTweetFormat.format.length > 0) {
+        // Try and parse, if not null, then return
+        const formatted: string | null = TweetFormatter.ParseCustomTweetFormat(userCustomTweetFormat.format, sale);
+        if (formatted !== null) {
+            return formatted;
+        }
+    }
 
     /// Uncomment one of the following to use a preset
     /// Otherwise, comment out both and provide your own tweet

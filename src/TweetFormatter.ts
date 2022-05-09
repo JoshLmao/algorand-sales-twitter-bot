@@ -1,4 +1,5 @@
-import { NFTSale } from "./types";
+import { DateTime } from "luxon";
+import { ESaleLocation, NFTSale } from "./types";
 
 export default class TweetFormatter {
 
@@ -25,4 +26,65 @@ export default class TweetFormatter {
         return address.substring(0, charCount) + separator + address.substring(address.length - charCount);
     }
 
+
+    /**
+     * Converts an ESaleLocation enum to a human readable string
+     * @param location 
+     * @returns sale location readable 
+     */
+    public static ConvertSaleLocationReadable(location: ESaleLocation): string {
+        switch(location) {
+            case ESaleLocation.RandGallery:
+                return "RandGallery";
+            case ESaleLocation.ALGOxNFT:
+                return "ALGOxNFT";
+            case ESaleLocation.AB2:
+                return "AB2";
+            case ESaleLocation.AlgoGems:
+                return "AlgoGems"
+            case ESaleLocation.AlgoDrop:
+                return "AlgoDrop"
+            case ESaleLocation.Dartroom:
+                return "Dartroom";
+            default:
+                return "Unknown Location";
+        }
+    }
+
+
+    /**
+     * Parses the custom tweet format that can be specified. Must be a string with the following variables surrounded by curly braces
+     * For example: `NFT {name}`
+     * @param tweetFormat 
+     * @returns custom tweet format 
+     */
+    public static ParseCustomTweetFormat(tweetFormat: string, sale: NFTSale): string {
+        const replaceMap = new Map<string, any>([
+            [ "{name}", sale.name ],
+            [ "{nftxUrl}", sale.nftxUrl ],
+            [ "{assetId}", sale.assetId ],
+            [ "{usdPrice}", sale.usdPrice ],
+            // Sale location converted to display readable string
+            [ "{location}", TweetFormatter.ConvertSaleLocationReadable(sale.saleLocation) ],
+            // Normal ualgos or regular Algos
+            [ "{ualgos}", sale.ualgos ],
+            [ "{algos}", sale.ualgos / 1000000 ],
+            // Full receiver address or a shortened version
+            [ "{receiver}", sale.receiver ],
+            [ "{shortReceiver}", TweetFormatter.ShortenBuyerAddress(sale.receiver, 4) ],
+            // Regular epochMs or formatted string
+            [ "{epochMs}", sale.epochMs ],
+            [ "{dateShort}", DateTime.fromMillis(sale.epochMs).toLocaleString(DateTime.DATETIME_SHORT) ],
+        ]);
+        
+        // Store original, iterate through replace map and replace any keys with values
+        let original: string = tweetFormat;
+        for (const [ key, value ] of replaceMap) {
+            if (original.includes(key)) {
+                original = original.replace(key, value);
+            }
+        }
+        // Return modified
+        return original;
+    }
 };

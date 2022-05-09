@@ -32,7 +32,10 @@ export default class TwitterComms {
     public SendTweet(content: string): boolean {
         if (this._client) {
             try {
-                this._client.tweets.statusesUpdate({ status: content });
+                this._client.tweets.statusesUpdate({ status: content })
+                    .catch((e) => {
+                        TwitBotLogger.error(`Unexpected error with TwitterComms | ${e.statusCode}  ${e.data}`);
+                    });
                 return true;
             }
             catch (e) {
