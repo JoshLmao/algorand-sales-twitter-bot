@@ -37,7 +37,7 @@ const logger = winston.createLogger({
 const outputFile: string | null =  process.env.LOG_OUTPUT_FILENAME ? process.env.LOG_OUTPUT_FILENAME : null;
 if (outputFile) {
     logger.add(
-        new winston.transports.File({ filename: 'combined.log' })
+        new winston.transports.File({ filename: outputFile })
     );
 }
 
