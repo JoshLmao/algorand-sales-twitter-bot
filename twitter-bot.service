@@ -3,10 +3,14 @@ Type=simple
 Restart=on-failure
 WorkingDirectory=/root/twitter-bot
 ExecStart=/bin/bash ./start.sh
+StartLimitIntervalSec=60
+StartLimitBurst=4
 
 [Unit]
 Description=Twitter Bot for posting Algorand collection sales to twitter, created by JoshLmao
 After=network.target
+Restart=on-failure
+RestartSec=30s
 
 [Install]
 WantedBy=multi-user.target
