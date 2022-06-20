@@ -1,4 +1,5 @@
 import { DateTime } from "luxon";
+import { NFDFullView } from "./nfd";
 import { ESaleLocation, NFTSale } from "./types";
 
 export default class TweetFormatter {
@@ -85,6 +86,30 @@ export default class TweetFormatter {
             }
         }
         // Return modified
+        return original;
+    }
+
+
+    /**
+     * Parses the given `nfdInfo` into the given `tweetFormat`
+     * @param tweetFormat 
+     * @param nfdInfo 
+     * @returns nfdformatting 
+     */
+    public static ParseNFDFormatting(tweetFormat: string, nfdInfo: NFDFullView | null): string {
+
+        const replaceMap: Map<string, any> = new Map([
+            // Replace receiver with the .algo NFD name
+            [ "{receiver}", nfdInfo?.name ?? "" ],
+            [ "{twitterHandle}", nfdInfo?.properties?.verified?.twitter ?? "" ]
+        ]);
+        
+        let original: string = tweetFormat;
+        for (const [ key, value ] of replaceMap) {
+            if (original.includes(key)) {
+                original = original.replace(key, value);
+            }
+        }
         return original;
     }
 };

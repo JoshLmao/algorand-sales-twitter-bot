@@ -3,6 +3,7 @@ import TwitterComms from "./TwitterComms";
 import { ESaleLocation, NFTSale } from "./types";
 import TwitBotLogger from "./TwitBotLogger";
 import TweetFormatter from "./TweetFormatter";
+import { NFDAPI, NFDFullView } from "./nfd";
 
 // Init .env and load
 const path = require('path'); 
@@ -65,7 +66,9 @@ function DoesSaleMeetRequirements(sale: NFTSale): boolean {
  * @param sale The sale that is requiring to be formatted into a tweet
  * @returns A formatted string containing the tweet you wish to send
  */
-function FormatSaleToTweet(sale: NFTSale): string {
+function FormatSaleToTweet(sale: NFTSale, options?: {
+    receiverNFDInfo?: NFDFullView,
+}): string {
     /*
      * Here is where you can customize the bot's tweet into any format you like.
      * The string can contain emojis if you wish to use them.    
@@ -86,8 +89,15 @@ function FormatSaleToTweet(sale: NFTSale): string {
 
     // If user supplied a custom tweet format in the json file, lets use it
     if (userCustomTweetFormat && userCustomTweetFormat.format && userCustomTweetFormat.format.length > 0) {
+
+        let formatted: string = userCustomTweetFormat.format;
+        
+        // Run through NFD formatting regardless of if we found one or not.
+        // We replace the NFD specific formatting with blank if we didn't find an NFD
+        formatted = TweetFormatter.ParseNFDFormatting(formatted, options?.receiverNFDInfo ?? null);
+
         // Try and parse, if not null, then return
-        const formatted: string | null = TweetFormatter.ParseCustomTweetFormat(userCustomTweetFormat.format, sale);
+        formatted = TweetFormatter.ParseCustomTweetFormat(formatted, sale);
         if (formatted !== null) {
             return formatted;
         }
@@ -125,6 +135,8 @@ async function check() {
                 TwitBotLogger.info(`Ignoring sale '${newSale.name}' for ALGO/USD '${newSale.ualgos / 1000000}/${newSale.usdPrice}' as doesn't meet requirements '${ALGO_MIN}/${USD_MIN}'`);
                 continue;
             }
+
+            const owningNFD: NFDFullView[] | null = await NFDAPI.FindNFD(newSale.receiver);
 
             // Format sale into tweet
             const formattedString: string = FormatSaleToTweet(newSale);
