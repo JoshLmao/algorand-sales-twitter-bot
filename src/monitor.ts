@@ -136,10 +136,18 @@ async function check() {
                 continue;
             }
 
-            const owningNFD: NFDFullView[] | null = await NFDAPI.FindNFD(newSale.receiver);
+            // Fetch if receiver has NFD, find first NFD with verified Twitter
+            const owningNFDs: NFDFullView[] | undefined = await NFDAPI.FindNFD(newSale.receiver) ?? undefined;
+            let verifiedTwitterNFD: NFDFullView | undefined = undefined;
+            if (owningNFDs) {
+                // Obtain first NFD with verified twitter or use first NFD
+                verifiedTwitterNFD = NFDAPI.GetFirstVerifiedTwitter(owningNFDs) ?? owningNFDs[0];
+            }
 
             // Format sale into tweet
-            const formattedString: string = FormatSaleToTweet(newSale);
+            const formattedString: string = FormatSaleToTweet(newSale, {
+                receiverNFDInfo: verifiedTwitterNFD ? verifiedTwitterNFD : undefined,
+            });
             if (_twitterComms === null) {
                 TwitBotLogger.error(`Twitter is not setup!`);
             }

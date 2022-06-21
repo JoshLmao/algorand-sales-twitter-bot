@@ -20,7 +20,10 @@ export type NFDFullView = {
 
 export class NFDAPI {
 
-    private static readonly MAINNET_URL: string = "";
+    /**
+     * Mainnet API url of NFD
+     */
+    private static readonly MAINNET_URL: string = "https://api.nf.domains";
 
 
     /**
@@ -42,12 +45,26 @@ export class NFDAPI {
 
 
     /**
+     * Gets the first NFD with a linked and verified twitter account
+     * @param nfds Array of NFDs
+     * @returns The first NFD with a verified twitter profile
+     */
+    public static GetFirstVerifiedTwitter(nfds: NFDFullView[]): NFDFullView | null {
+        for (const nfd of nfds) {
+            if (nfd.properties?.verified?.twitter) {
+                return nfd;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Sends a web request
      * @param url 
      * @returns request 
      */
     private static async SendRequest(url: URL): Promise<any> {
-        const response: any = await axios({
+        const response: any = await axios(url.href, {
             method: "GET",
         })
         .catch( (error) => {

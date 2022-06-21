@@ -97,11 +97,11 @@ export default class TweetFormatter {
      * @returns nfdformatting 
      */
     public static ParseNFDFormatting(tweetFormat: string, nfdInfo: NFDFullView | null): string {
-
         const replaceMap: Map<string, any> = new Map([
             // Replace receiver with the .algo NFD name
             [ "{receiver}", nfdInfo?.name ?? "" ],
-            [ "{twitterHandle}", nfdInfo?.properties?.verified?.twitter ?? "" ]
+            [ "{shortReceiver}", nfdInfo?.name ?? "" ],
+            [ "{nfdTwitterHandle}", nfdInfo?.properties?.verified?.twitter ?? "" ]
         ]);
         
         let original: string = tweetFormat;
