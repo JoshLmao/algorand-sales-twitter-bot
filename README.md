@@ -103,6 +103,16 @@ For example
 | `{epochMs}` | `1645391880000` | [Refer to this](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now) for more information on how time works in coding |
 | `{dateShort}` | 20/02/2022, 21:18 | A short readable string of the date and time of the sale |
 
+### Non-Fungible Domains (NFD) Integration
+
+If the `receiver` address owns an [NFD](https://app.nf.domains), then the following keys will be replaced with the example values given.
+
+| Key | Example | Description|
+| --- | --- | --- |
+| `{receiver}` | joshlmao.algo | The .algo name of the owned NFD |
+| `{shortReceiver}` | joshlmao.algo | The .algo name of the owned NFD |
+| `{nfdTwitterHandle}` | [@joshlmao](https://twitter.com/joshlmao) | Verified twitter handle that the user connected via nf.domains site |
+
 
 ## Hard Way: Code
 

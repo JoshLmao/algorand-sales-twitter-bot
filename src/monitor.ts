@@ -3,6 +3,7 @@ import TwitterComms from "./TwitterComms";
 import { ESaleLocation, NFTSale } from "./types";
 import TwitBotLogger from "./TwitBotLogger";
 import TweetFormatter from "./TweetFormatter";
+import { NFDAPI, NFDFullView } from "./nfd";
 
 // Init .env and load
 const path = require('path'); 
@@ -65,7 +66,9 @@ function DoesSaleMeetRequirements(sale: NFTSale): boolean {
  * @param sale The sale that is requiring to be formatted into a tweet
  * @returns A formatted string containing the tweet you wish to send
  */
-function FormatSaleToTweet(sale: NFTSale): string {
+function FormatSaleToTweet(sale: NFTSale, options?: {
+    receiverNFDInfo?: NFDFullView,
+}): string {
     /*
      * Here is where you can customize the bot's tweet into any format you like.
      * The string can contain emojis if you wish to use them.    
@@ -86,8 +89,15 @@ function FormatSaleToTweet(sale: NFTSale): string {
 
     // If user supplied a custom tweet format in the json file, lets use it
     if (userCustomTweetFormat && userCustomTweetFormat.format && userCustomTweetFormat.format.length > 0) {
+
+        let formatted: string = userCustomTweetFormat.format;
+        
+        // Run through NFD formatting regardless of if we found one or not.
+        // We replace the NFD specific formatting with blank if we didn't find an NFD
+        formatted = TweetFormatter.ParseNFDFormatting(formatted, options?.receiverNFDInfo ?? null);
+
         // Try and parse, if not null, then return
-        const formatted: string | null = TweetFormatter.ParseCustomTweetFormat(userCustomTweetFormat.format, sale);
+        formatted = TweetFormatter.ParseCustomTweetFormat(formatted, sale);
         if (formatted !== null) {
             return formatted;
         }
@@ -126,8 +136,18 @@ async function check() {
                 continue;
             }
 
+            // Fetch if receiver has NFD, find first NFD with verified Twitter
+            const owningNFDs: NFDFullView[] | undefined = await NFDAPI.FindNFD(newSale.receiver) ?? undefined;
+            let verifiedTwitterNFD: NFDFullView | undefined = undefined;
+            if (owningNFDs) {
+                // Obtain first NFD with verified twitter or use first NFD
+                verifiedTwitterNFD = NFDAPI.GetFirstVerifiedTwitter(owningNFDs) ?? owningNFDs[0];
+            }
+
             // Format sale into tweet
-            const formattedString: string = FormatSaleToTweet(newSale);
+            const formattedString: string = FormatSaleToTweet(newSale, {
+                receiverNFDInfo: verifiedTwitterNFD ? verifiedTwitterNFD : undefined,
+            });
             if (_twitterComms === null) {
                 TwitBotLogger.error(`Twitter is not setup!`);
             }
