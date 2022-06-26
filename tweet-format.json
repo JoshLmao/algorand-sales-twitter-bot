@@ -1,5 +1,6 @@
 {
     "exampleFormat": "👀 {name}\n🏧 {algos}\n💰 {usdPrice}\n🤝 {shortReceiver}\n{nftxUrl}",
+    "exampleNfdFormat": "👀 {name}\n🏧 {algos}\n💰 {usdPrice}\n🤝 {shortReceiver} {nfdTwitterHandle}\n{nftxUrl}",
     
     "format": null
 }
