@@ -99,14 +99,15 @@ export default class TweetFormatter {
     public static ParseNFDFormatting(tweetFormat: string, nfdInfo: NFDFullView | null): string {
         const replaceMap: Map<string, any> = new Map([
             // Replace receiver with the .algo NFD name
-            [ "{receiver}", nfdInfo?.name ?? "" ],
-            [ "{shortReceiver}", nfdInfo?.name ?? "" ],
+            [ "{receiver}", nfdInfo?.name ?? null ],
+            [ "{shortReceiver}", nfdInfo?.name ?? null ],
             [ "{nfdTwitterHandle}", nfdInfo?.properties?.verified?.twitter ?? "" ]
         ]);
         
         let original: string = tweetFormat;
         for (const [ key, value ] of replaceMap) {
-            if (original.includes(key)) {
+            // If not null, replace value
+            if (original.includes(key) && value !== null) {
                 original = original.replace(key, value);
             }
         }
