@@ -36,11 +36,8 @@ export class NFDAPI {
         url.searchParams.append("view", "full");
         url.searchParams.append("address", address);
 
-        const resp: NFDFullView[] = await this.SendRequest(url);
-        if (resp && resp.length > 0) {
-            return resp;
-        }
-        return null;
+        const resp: NFDFullView[] | null = await this.SendRequest(url);
+        return resp;
     }
 
 
@@ -64,18 +61,28 @@ export class NFDAPI {
      * @returns request 
      */
     private static async SendRequest(url: URL): Promise<any> {
-        const response: any = await axios(url.href, {
+        return await axios(url.href, {
             method: "GET",
         })
-        .catch( (error) => {
-            console.error(`Unexpected error querting NFD API to url '${url.href}' | ${error}`);
+        .catch( ({ response, error }) => {
+            // NFDs API returns 404 if unable to find any related NFDs
+            if (response && response.status === 404) {
+                return response;
+            }
+            else {
+                console.error(`Unexpected error querting NFD API to url '${url.href}' | ${error}`);
+                return null;
+            }
+        })
+        .then(async (response: any) => {
+            if (response && response.status === 200) {
+                return await response.data;
+            }
+            else if (response && response.status === 404) {
+                return [];
+            }
             return null;
         });
-
-        if (response && response.status === 200) {
-            return await response.data;
-        }
-        return null;
     }
 
 }
