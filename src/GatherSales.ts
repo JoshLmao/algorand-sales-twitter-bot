@@ -1,10 +1,14 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { NFTSale } from "./types";
 import TwitBotLogger from "./TwitBotLogger";
 
 export type NFTxSaleFeedResponse = {
     nextToken: string;
     sales: NFTSale[];
+};
+
+export type NFTxErrorResponse = {
+    error: string;
 };
 
 /**
@@ -28,9 +32,16 @@ export async function GetRecentCollectionSales(collectionId: string, userAuth: s
         endpoint.searchParams.append("nextToken", nextToken);
     }
     
-    const data: NFTxSaleFeedResponse | null = await MakeRequest(endpoint, userAuth);
+    const data: NFTxSaleFeedResponse | NFTxErrorResponse | null = await MakeRequest(endpoint, userAuth);
     if (data !== null) {
-        return data;
+        // Check if an NFTx API error has occured
+        if ('error' in data) {
+            TwitBotLogger.error(`Error in NFTx API: ${data.error}`);
+            return null;
+        }
+        else {
+            return data;
+        }
     }
     else {
         // Request failed or something happened
@@ -47,7 +58,7 @@ export async function GetRecentCollectionSales(collectionId: string, userAuth: s
 async function MakeRequest(url: URL, auth: string | null): Promise<any | null> {
     try {
         // Build and make response
-        const response: any = await axios(url.href, {
+        const response: AxiosResponse | null = await axios(url.href, {
             method: "GET",
             headers: {
                 "Content-Type": "text/plain",
@@ -55,15 +66,18 @@ async function MakeRequest(url: URL, auth: string | null): Promise<any | null> {
                 "authorization": auth ?? "",
             },
         })
-        .catch( (error) => {
-            if (error.response.status === 429) {
+        .catch( (error: AxiosError) => {
+            if (error.response?.status === 429) {
                 TwitBotLogger.error(`Error Status Code 429: Request blocked as you are calling the API too quickly!`);
+            }
+            else {
+                TwitBotLogger.error(`Unexpeced Request Error: ${error.message}`);
             }
             return null;
         });
 
         // If valid, get data and return
-        if (response && response.status === 200) {
+        if (response && response?.status === 200) {
             return await response.data;
         }
         return null;
